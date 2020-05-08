@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-
 #include "s-box.h"
 
 #define MAX_LINE 50

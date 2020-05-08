@@ -1,25 +1,16 @@
 #include <stdio.h>
 
-#include "s-box.h"
+#include "rcon.h"
 
 #define EXAMPLE 0xBA
 
 int main(int argv, char **args) 
 {
-	S_box *s_box = loadBoxTable("s-box.csv");
+	Rcon *rcon = createRconTable();
 
-	if(s_box != NULL)
-	{
-		printf("\nElemento %x = %x\n", EXAMPLE, getValue(s_box->matrix, EXAMPLE));
+	showRconTable(rcon);
 
-		printf("Se cargo con exito la tabla s_box\n");
-
-		free(s_box);
-	}
-	else
-	{
-		printf("Hubo un error en la carga de la tabla s-box");
-	}
+	free(rcon);
 
 	return 0;
 }
