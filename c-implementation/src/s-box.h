@@ -5,7 +5,12 @@
 
 typedef struct S_box {
 	int matrix[RADIX][RADIX];
+	int inv_matrix[RADIX][RADIX];
 
 } S_box;
 
-S_box *loadBox(char *path);
+S_box *loadBoxTable(char *path);
+
+void showBoxTable(int table[RADIX][RADIX]);
+
+int getValue(int table[RADIX][RADIX], int value);
