@@ -11,6 +11,8 @@ class Key
 		Key(void);
 		~Key(void);
 
+		void rotword(void);
+
 		void loadKey(unsigned char *new_key);
 		std::vector<int> &getColumn(int column);
 		void show(void) const;

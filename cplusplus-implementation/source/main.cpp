@@ -8,12 +8,14 @@ int main(int argc, char const *argv[])
 
 	Key key;
 	key.loadKey(initial_key);
+	key.rotword();
+	key.show();
 
 	Sbox sbox;
 
 	Rcon rcon;
-	rcon.showTable();
-	rcon.function(key.getColumn(0));
+	//rcon.showTable();
+	//rcon.function(key.getColumn(0));
 
 	return 0;
 }

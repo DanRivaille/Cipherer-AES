@@ -2,7 +2,7 @@
 
 Key::Key(void)
 {
-	this->current_round = 0;
+	this->current_round = 1;
 
 	this->matrix.resize(MATRIX_ORDER * CANT_ROUNDS);
 	for(int i = 0; i < MATRIX_ORDER * CANT_ROUNDS; ++i)
@@ -14,6 +14,18 @@ Key::Key(void)
 Key::~Key(void)
 {
 
+}
+
+void Key::rotword(void)
+{
+	int aux = this->matrix[(current_round * MATRIX_ORDER) - 1][0];
+
+	for(int i = 1; i < this->matrix[(this->current_round * MATRIX_ORDER) - 1].size(); ++i)
+	{
+		this->matrix[this->current_round * MATRIX_ORDER][i - 1] = this->matrix[(this->current_round * MATRIX_ORDER) - 1][i];
+	}
+
+	this->matrix[this->current_round * MATRIX_ORDER][MATRIX_ORDER - 1] = aux;
 }
 
 void Key::loadKey(unsigned char *initial_key)
