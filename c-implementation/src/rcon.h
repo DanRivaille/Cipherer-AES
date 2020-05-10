@@ -1,3 +1,6 @@
+#ifndef R_CON_H
+#define R_CON_H
+
 #include "s-box.h"
 
 #define CANT_ROUNDS 10
@@ -26,3 +29,5 @@ void showRconTable(Rcon *table);
  * y la columna correspondiente de la tabla rcon.
  * */
 void functionRcon(Rcon *table, int state[]);
+
+#endif

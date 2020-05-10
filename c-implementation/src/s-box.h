@@ -1,3 +1,6 @@
+#ifndef S_BOX_H
+#define S_BOX_H
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -28,3 +31,5 @@ void showBoxTable(int table[RADIX][RADIX]);
  * Devuelve el valor correspondiente a la coordenada (value, 1er digito en hex = filas, 2do digito en hex = columan) ingresada.
  * */
 int getValue(int table[RADIX][RADIX], int value);
+
+#endif
