@@ -1,4 +1,5 @@
 #include "Key.h"
+#include "Sbox.h"
 
 int main(int argc, char const *argv[])
 {
@@ -6,7 +7,17 @@ int main(int argc, char const *argv[])
 
 	Key key;
 	key.loadKey(initial_key);
-	key.show();
+
+	Sbox sbox;
+	sbox.loadTable("s-box.csv");
+	sbox.showTable(TABLE);
+
+	if(argc > 1)
+	{
+		int value = strtol(argv[1], NULL, RADIX);
+
+		printf("\nTabla %2x : %2x\n", value, sbox.getValue(TABLE, value));
+	}
 
 	return 0;
 }

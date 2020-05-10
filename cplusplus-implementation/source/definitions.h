@@ -2,6 +2,8 @@
 #define DEFINITIONS_H
 
 #include <stdio.h>
+#include <string>
+#include <string.h>
 #include <vector>
 
 #define MATRIX_ORDER 4

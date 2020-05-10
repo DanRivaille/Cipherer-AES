@@ -2,6 +2,8 @@
 
 Key::Key(void)
 {
+	this->current_round = 0;
+
 	this->matrix.resize(MATRIX_ORDER * CANT_ROUNDS);
 	for(int i = 0; i < MATRIX_ORDER * CANT_ROUNDS; ++i)
 	{

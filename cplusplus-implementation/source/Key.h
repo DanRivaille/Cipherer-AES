@@ -16,6 +16,7 @@ class Key
 	
 	private:
 		std::vector<std::vector<int>> matrix;
+		int current_round;
 
 };
 
