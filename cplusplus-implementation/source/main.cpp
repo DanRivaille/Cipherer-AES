@@ -13,6 +13,7 @@ int main(int argc, char const *argv[])
 
 	Rcon rcon;
 	rcon.showTable();
+	rcon.function(key.getColumn(0));
 
 	return 0;
 }

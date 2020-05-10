@@ -9,6 +9,7 @@ class Rcon
 		Rcon(void);
 		~Rcon(void);
 
+		void function(std::vector<int> &column);
 		void showTable() const;
 	
 	private:

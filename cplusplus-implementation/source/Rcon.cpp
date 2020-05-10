@@ -25,6 +25,16 @@ Rcon::~Rcon(void)
 
 }
 
+void Rcon::function(std::vector<int> &column)
+{
+	for(int i = 0; i < column.size(); ++i)
+	{
+		printf("%x %x\n", column[i], this->table[this->current_round][i]);
+	}
+
+	this->current_round++;
+}
+
 void Rcon::showTable() const
 {
 	for(auto columns : this->table)

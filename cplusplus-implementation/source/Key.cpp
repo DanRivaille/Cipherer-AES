@@ -39,6 +39,11 @@ void Key::loadKey(unsigned char *initial_key)
 	printf("\n");
 }
 
+std::vector<int> &Key::getColumn(int column)
+{
+	return this->matrix[column];
+}
+
 void Key::show(void) const
 {
 	printf("\n");

@@ -12,6 +12,7 @@ class Key
 		~Key(void);
 
 		void loadKey(unsigned char *new_key);
+		std::vector<int> &getColumn(int column);
 		void show(void) const;
 	
 	private:
