@@ -10,7 +10,7 @@ DIR_SOURCE = source
 
 #Nombre de los ejecutables y ficheros objetos usados
 EXE_NAME = main
-OBJS_FILES = $(DIR_SOURCE)/main.cpp $(DIR_OBJS)/Key.o $(DIR_OBJS)/Sbox.o
+OBJS_FILES = $(DIR_SOURCE)/main.cpp $(DIR_OBJS)/Key.o $(DIR_OBJS)/Sbox.o $(DIR_OBJS)/Rcon.o
 
 $(EXE_NAME): $(OBJS_FILES)
 	$(CC) $^ $(CFLAGS) -o $(EXE_NAME)
@@ -18,8 +18,8 @@ $(EXE_NAME): $(OBJS_FILES)
 $(DIR_OBJS)/Sbox.o: $(DIR_SOURCE)/Sbox.cpp  $(DIR_SOURCE)/Sbox.h $(DIR_SOURCE)/definitions.h
 	$(CC) $(CFLAGS) -c $(DIR_SOURCE)/Sbox.cpp -o $(DIR_OBJS)/Sbox.o
 
-#$(DIR_OBJS)/rcon.o:  $(DIR_SOURCE)/rcon.c $(DIR_SOURCE)/rcon.h $(DIR_SOURCE)/definitions.h
-#	$(CC) $(CFLAGS) -c $(DIR_SOURCE)/rcon.c -o $(DIR_OBJS)/rcon.o
+$(DIR_OBJS)/Rcon.o:  $(DIR_SOURCE)/Rcon.cpp $(DIR_SOURCE)/Rcon.h $(DIR_SOURCE)/definitions.h
+	$(CC) $(CFLAGS) -c $(DIR_SOURCE)/Rcon.cpp -o $(DIR_OBJS)/Rcon.o
 
 $(DIR_OBJS)/Key.o:  $(DIR_SOURCE)/Key.cpp  $(DIR_SOURCE)/Key.h $(DIR_SOURCE)/definitions.h
 	$(CC) $(CFLAGS) -c $(DIR_SOURCE)/Key.cpp -o $(DIR_OBJS)/Key.o
