@@ -8,14 +8,25 @@ int main(int argc, char const *argv[])
 
 	Key key;
 	key.loadKey(initial_key);
-	key.rotword();
-	key.show();
 
 	Sbox sbox;
+	sbox.loadTable("s-box.csv");
 
 	Rcon rcon;
 	//rcon.showTable();
-	//rcon.function(key.getColumn(0));
+	//rcon.functionRcon(key.getColumn(0));
+
+	key.show();
+	
+	for(int i = 0; i < 10; ++i)
+	{
+		key.calculateNextKey(sbox, rcon);
+
+		key.show();
+	}
+
+
+
 
 	return 0;
 }

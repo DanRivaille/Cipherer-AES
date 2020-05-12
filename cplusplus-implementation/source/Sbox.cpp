@@ -78,6 +78,14 @@ void Sbox::showTable(IdTable id_table) const
 	}	
 }
 
+void Sbox::functionSbox(std::vector<int> &column, IdTable id_table)
+{
+	for(auto &value : column)
+	{
+		value = getValue(id_table, value);
+	}
+}
+
 /**
  * Funcion que devuelve el valor correspondiente a las coordenadas de "value", el primer digito
  * de su representacion en hexadecimal corresponde a la fila, y el segundo digito de su representacion

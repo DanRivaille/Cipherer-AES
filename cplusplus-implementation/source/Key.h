@@ -2,6 +2,8 @@
 #define KEY_H
 
 #include "definitions.h"
+#include "Sbox.h"
+#include "Rcon.h"
 
 class Key
 {
@@ -14,8 +16,12 @@ class Key
 		void rotword(void);
 
 		void loadKey(unsigned char *new_key);
-		std::vector<int> &getColumn(int column);
 		void show(void) const;
+
+		void calculateNextKey(Sbox &sbox, Rcon &rcon);
+
+		std::vector<int> &getColumn(int column);
+		int getCurrentRound(void) const;
 	
 	private:
 		std::vector<std::vector<int>> matrix;

@@ -15,6 +15,8 @@ class Sbox
 
 		void loadTable(const std::string path);
 		void showTable(IdTable id_table) const;
+
+		void functionSbox(std::vector<int> &column, IdTable id_table);
 		int getValue(IdTable id_table, int value);
 	
 	private:

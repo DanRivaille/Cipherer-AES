@@ -9,11 +9,11 @@ class Rcon
 		Rcon(void);
 		~Rcon(void);
 
-		void function(std::vector<int> &column);
+		void functionRcon(std::vector<int> &column);
 		void showTable() const;
 	
 	private:
-		std::vector<std::vector<int>> table;
+		std::vector<int> table;
 		int current_round;
 };
 
