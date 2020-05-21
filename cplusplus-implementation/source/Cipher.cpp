@@ -10,10 +10,11 @@ void show(std::vector<std::vector<unsigned char>> v)
 	{
 		for(int j = 0; j < 4; ++j)
 		{
-			printf("%2x ", v[i][j]);
+			printf("%2x ", v[j][i]);
 		}
 		printf("\n");
 	}
+	printf("\n");
 }
 
 Cipher::Cipher(unsigned char *new_key = NULL)
@@ -62,19 +63,32 @@ unsigned char *Cipher::cifrate(unsigned char *text)
 
 	std::vector<std::vector<unsigned char>> state = {{0x32, 0x43, 0xf6, 0xa8}, {0x88, 0x5a, 0x30, 0x8d}, {0x31, 0x31, 0x98, 0xa2}, {0xe0, 0x37, 0x07, 0x34}};
 
+	show(state);
+
 	initialRoundCifrate(state);
 
 	for(int round = 1; round < CANT_ROUNDS; ++round)
 	{
-		standardRoundCifrate();
+		standardRoundCifrate(state, round);
 	}
 
-	finalRoundCifrate();
+	finalRoundCifrate(state);
+
+	decifrate(state);
 }
 
-unsigned char *Cipher::decifrate(unsigned char *text)
+unsigned char *Cipher::decifrate(std::vector<std::vector<unsigned char>> &state)
 {
+	initialRoundDecifrate(state);
 
+	for(int round = CANT_ROUNDS - 1; round > 0; --round)
+	{
+		standardRoundDecifrate(state, round);
+	}
+
+	finalRoundDecifrate(state);
+
+	show(state);
 }
 
 /** ----------------------------- Rondas del modo de cifrado ----------------------------- **/
@@ -83,30 +97,50 @@ void Cipher::initialRoundCifrate(std::vector<std::vector<unsigned char>> &state)
 	addRoundKey(state, 0);
 }
 
-void Cipher::standardRoundCifrate(void)
+void Cipher::standardRoundCifrate(std::vector<std::vector<unsigned char>> &state, int current_round)
 {
-	printf("standardRound\n");
+	subBytes(state);
+
+	shiftRows(state);
+
+	mixColumns(state);
+
+	addRoundKey(state, current_round);
 }
 
-void Cipher::finalRoundCifrate(void)
+void Cipher::finalRoundCifrate(std::vector<std::vector<unsigned char>> &state)
 {
-	printf("finalRound\n");
+	subBytes(state);
+
+	shiftRows(state);
+
+	addRoundKey(state, 10);
 }
 
 /** ----------------------------- Rondas del modo de decifrado ----------------------------- **/
-void Cipher::initialRoundDecifrate(void)
+void Cipher::initialRoundDecifrate(std::vector<std::vector<unsigned char>> &state)
 {
+	addRoundKey(state, 10);
 
+	invShiftRows(state);
+
+	invSubBytes(state);
 }
 
-void Cipher::standardRoundDecifrate(void)
+void Cipher::standardRoundDecifrate(std::vector<std::vector<unsigned char>> &state, int current_round)
 {
+	addRoundKey(state, current_round);
 
+	invMixColumns(state);
+
+	invShiftRows(state);
+
+	invSubBytes(state);
 }
 
-void Cipher::finalRoundDecifrate(void)
+void Cipher::finalRoundDecifrate(std::vector<std::vector<unsigned char>> &state)
 {
-
+	addRoundKey(state, 0);
 }
 
 /** --------------------------------------- Funciones auxiliares --------------------------------------- **/

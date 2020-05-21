@@ -14,16 +14,16 @@ class Cipher
 		void setKey(unsigned char *new_key);
 
 		unsigned char *cifrate(unsigned char *text);
-		unsigned char *decifrate(unsigned char *text);
+		unsigned char *decifrate(std::vector<std::vector<unsigned char>> &state);
 
 	private:
 		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);
-		void standardRoundCifrate(void);
-		void finalRoundCifrate(void);
+		void standardRoundCifrate(std::vector<std::vector<unsigned char>> &state, int current_round);
+		void finalRoundCifrate(std::vector<std::vector<unsigned char>> &state);
 
-		void initialRoundDecifrate(void);
-		void standardRoundDecifrate(void);
-		void finalRoundDecifrate(void);
+		void initialRoundDecifrate(std::vector<std::vector<unsigned char>> &state);
+		void standardRoundDecifrate(std::vector<std::vector<unsigned char>> &state, int current_round);
+		void finalRoundDecifrate(std::vector<std::vector<unsigned char>> &state);
 
 		void expandText(void);
 		void rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result);
