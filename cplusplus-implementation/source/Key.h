@@ -2,8 +2,6 @@
 #define KEY_H
 
 #include "definitions.h"
-#include "Sbox.h"
-#include "Rcon.h"
 
 class Key
 {
@@ -18,7 +16,7 @@ class Key
 		void loadKey(unsigned char *new_key);
 		void show(void) const;
 
-		void calculateNextKey(Sbox &sbox, Rcon &rcon);
+		//void calculateNextKey(Sbox &sbox, Rcon &rcon);
 
 		std::vector<int> &getColumn(int column);
 		int getCurrentRound(void) const;
