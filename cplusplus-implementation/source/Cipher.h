@@ -3,6 +3,8 @@
 
 #include "definitions.h"
 
+using namespace std;
+
 class Cipher
 {
 	public:
@@ -21,7 +23,7 @@ class Cipher
 
 		void expandText(void);
 		void rotWord(void);
-		void xorBetweenVectors(void);
+		void xorBetweenVectors(const vector<unsigned char> &vec1, const vector<unsigned char> &vec2, vector<unsigned char> &vec_result);
 
 		void addRoundKey(std::vector<std::vector<unsigned char>> &state);
 		void shiftRows(std::vector<std::vector<unsigned char>> &state);

@@ -2,6 +2,8 @@
 
 #include "Cipher.h"
 
+using namespace std;
+
 Cipher::Cipher(unsigned char *new_key = NULL)
 {
 	this->key.resize(MATRIX_ORDER * (CANT_ROUNDS + 1));
@@ -46,14 +48,16 @@ unsigned char *Cipher::cifrate(unsigned char *text)
 	std::vector<std::vector<unsigned char>> v = {{0xda, 0xbf, 0x5d, 0x30}, {0xe0, 0xb4, 0x52, 0xae}, {0xb8, 0x41, 0x11, 0xf1}, {0x1e, 0x27, 0x98, 0xe5}};
 	std::vector<std::vector<unsigned char>> v2 = {{0x49, 0xdb, 0x87, 0x3b}, {0x45, 0x39, 0x53, 0x89}, {0x7f, 0x02, 0xd2, 0xf1}, {0x77, 0xde, 0x96, 0x1a}};
 
-	mixColumns(v);
-	invMixColumns(v);
+	std::vector<std::vector<unsigned char>> ad = {{0x32, 0x43, 0xf6, 0xa8}, {0x88, 0x5a, 0x30, 0x8d}, {0x31, 0x31, 0x98, 0xa2}, {0xe0, 0x37, 0x07, 0x34}};	
+
+
+	addRoundKey(ad);
 
 	for(int i = 0; i < 4; ++i)
 	{
 		for(int j = 0; j < 4; ++j)
 		{
-			printf("%2x ", v[i][j]);
+			printf("%2x ", ad[i][j]);
 		}
 		printf("\n");
 	}
@@ -101,14 +105,22 @@ void Cipher::rotWord(void)
 
 }
 
-void Cipher::xorBetweenVectors(void)
+void Cipher::xorBetweenVectors(const vector<unsigned char> &vec1, const vector<unsigned char> &vec2, vector<unsigned char> &vec_result)
 {
-
+	for(int i = 0; i < MATRIX_ORDER; ++i)
+	{
+		vec_result[i] = vec1[i] ^ vec2[i];
+	}
 }
 
 void Cipher::addRoundKey(std::vector<std::vector<unsigned char>> &state)
 {
+std::vector<std::vector<unsigned char>> qye = {{0x2b, 0x7e, 0x15, 0x16}, {0x28, 0xae, 0xd2, 0xa6}, {0xab, 0xf7, 0x15, 0x88}, {0x09, 0xcf, 0x4f, 0x3c}};	
 
+	for(int i = 0; i < MATRIX_ORDER; ++i)
+	{
+		xorBetweenVectors(state[i], qye[i], state[i]);
+	}
 }
 
 void Cipher::shiftRows(std::vector<std::vector<unsigned char>> &state)
