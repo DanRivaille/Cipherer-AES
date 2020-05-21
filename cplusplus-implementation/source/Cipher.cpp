@@ -64,15 +64,17 @@ unsigned char *Cipher::cifrate(unsigned char *text)
 
 	std::vector<std::vector<unsigned char>> sub = {{0x19, 0x3d, 0xe3, 0xbe}, {0xa0, 0xf4, 0xe2, 0x2b}, {0x9a, 0xc6, 0x8d, 0x2a}, {0xe9, 0xf8, 0x48, 0x08}};
 
-	show(sub);
-	printf("\n");
-
 	subBytes(sub);
 
 	show(sub);
 	printf("\n");
 
-	invSubBytes(sub);
+	shiftRows(sub);
+
+	show(sub);
+	printf("\n");
+
+	invShiftRows(sub);
 
 	show(sub);
 	printf("\n");
@@ -115,9 +117,40 @@ void Cipher::expandText(void)
 
 }
 
-void Cipher::rotWord(void)
+void Cipher::rotWord(std::vector<unsigned char> &vec)
 {
+	unsigned char aux = vec[0];
 
+	for(int i = 1; i < MATRIX_ORDER; ++i)
+	{
+		vec[i - 1] = vec[i];
+	}
+
+	vec[MATRIX_ORDER - 1] = aux;
+}
+
+void Cipher::rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int column)
+{
+	unsigned char aux = vec[0][column];
+
+	for(int i = 1; i < MATRIX_ORDER; ++i)
+	{
+		vec[i - 1][column] = vec[i][column];
+	}
+
+	vec[MATRIX_ORDER - 1][column] = aux;
+}
+
+void Cipher::rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int column)
+{
+	unsigned char aux = vec[MATRIX_ORDER - 1][column];
+
+	for(int i = MATRIX_ORDER - 1; i > 0; --i)
+	{
+		vec[i][column] = vec[i - 1][column];
+	}
+
+	vec[0][column] = aux;
 }
 
 void Cipher::xorBetweenVectors(const vector<unsigned char> &vec1, const vector<unsigned char> &vec2, vector<unsigned char> &vec_result)
@@ -140,7 +173,13 @@ void Cipher::addRoundKey(std::vector<std::vector<unsigned char>> &state)
 
 void Cipher::shiftRows(std::vector<std::vector<unsigned char>> &state)
 {
-
+	for(int i = 1; i < MATRIX_ORDER; ++i)
+	{
+		for(int j = 0; j < i; ++j)
+		{
+			rotColumnLeft(state, i);
+		}
+	}
 }
 
 void Cipher::subBytes(std::vector<std::vector<unsigned char>> &state)
@@ -172,14 +211,15 @@ void Cipher::mixColumns(std::vector<std::vector<unsigned char>> &state)
 	}
 }
 
-void Cipher::invAddRoundKey(std::vector<std::vector<unsigned char>> &state)
-{
-
-}
-
 void Cipher::invShiftRows(std::vector<std::vector<unsigned char>> &state)
 {
-
+	for(int i = 1; i < MATRIX_ORDER; ++i)
+	{
+		for(int j = 0; j < i; ++j)
+		{
+			rotColumnRight(state, i);
+		}
+	}
 }
 
 void Cipher::invSubBytes(std::vector<std::vector<unsigned char>> &state)
