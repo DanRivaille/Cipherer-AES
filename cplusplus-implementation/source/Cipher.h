@@ -17,9 +17,13 @@ class Cipher
 		unsigned char *decifrate(unsigned char *text);
 
 	private:
-		void initialRound(void);
-		void standardRound(void);
-		void finalRound(void);
+		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);
+		void standardRoundCifrate(void);
+		void finalRoundCifrate(void);
+
+		void initialRoundDecifrate(void);
+		void standardRoundDecifrate(void);
+		void finalRoundDecifrate(void);
 
 		void expandText(void);
 		void rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result);
@@ -27,7 +31,7 @@ class Cipher
 		void rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int column);
 		void xorBetweenVectors(const vector<unsigned char> &vec1, const vector<unsigned char> &vec2, vector<unsigned char> &vec_result);
 
-		void addRoundKey(std::vector<std::vector<unsigned char>> &state);
+		void addRoundKey(std::vector<std::vector<unsigned char>> &state, int current_round);
 		void shiftRows(std::vector<std::vector<unsigned char>> &state);
 		void subBytes(std::vector<std::vector<unsigned char>> &state);
 		void mixColumns(std::vector<std::vector<unsigned char>> &state);

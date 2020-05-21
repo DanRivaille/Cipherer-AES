@@ -55,6 +55,73 @@ void Cipher::setKey(unsigned char *new_key)
 	}
 }
 
+unsigned char *Cipher::cifrate(unsigned char *text)
+{
+	//se crean los bloques de 128 bits que se cifraran
+	expandText();
+
+	std::vector<std::vector<unsigned char>> state = {{0x32, 0x43, 0xf6, 0xa8}, {0x88, 0x5a, 0x30, 0x8d}, {0x31, 0x31, 0x98, 0xa2}, {0xe0, 0x37, 0x07, 0x34}};
+
+	initialRoundCifrate(state);
+
+	for(int round = 1; round < CANT_ROUNDS; ++round)
+	{
+		standardRoundCifrate();
+	}
+
+	finalRoundCifrate();
+}
+
+unsigned char *Cipher::decifrate(unsigned char *text)
+{
+
+}
+
+/** ----------------------------- Rondas del modo de cifrado ----------------------------- **/
+void Cipher::initialRoundCifrate(std::vector<std::vector<unsigned char>> &state)
+{
+	addRoundKey(state, 0);
+}
+
+void Cipher::standardRoundCifrate(void)
+{
+	printf("standardRound\n");
+}
+
+void Cipher::finalRoundCifrate(void)
+{
+	printf("finalRound\n");
+}
+
+/** ----------------------------- Rondas del modo de decifrado ----------------------------- **/
+void Cipher::initialRoundDecifrate(void)
+{
+
+}
+
+void Cipher::standardRoundDecifrate(void)
+{
+
+}
+
+void Cipher::finalRoundDecifrate(void)
+{
+
+}
+
+/** --------------------------------------- Funciones auxiliares --------------------------------------- **/
+
+/**
+ * Expande el texto de forma que se armen los bloques de 128 bits para poder cifrar cada uno de ellos
+ */
+void Cipher::expandText(void)
+{
+
+}
+
+/**
+ * Calcula las subclaves a partir de la clave estableceida previamente.
+ * */
 void Cipher::calculateSubKeys(void)
 {
 	//Recorre columna por columna, empezando por la primera columna de la primera subclave
@@ -88,46 +155,7 @@ void Cipher::calculateSubKeys(void)
 	}
 }
 
-unsigned char *Cipher::cifrate(unsigned char *text)
-{
-	//se crean los bloques de 128 bits que se cifraran
-	expandText();
-
-	initialRound();
-
-	for(int round = 0; round < CANT_ROUNDS; ++round)
-	{
-		standardRound();
-	}
-
-	finalRound();
-}
-
-unsigned char *Cipher::decifrate(unsigned char *text)
-{
-
-}
-
-void Cipher::initialRound(void)
-{
-
-}
-
-void Cipher::standardRound(void)
-{
-
-}
-
-void Cipher::finalRound(void)
-{
-
-}
-
-void Cipher::expandText(void)
-{
-
-}
-
+/** Realiza la funcion rotWord en el calculo de las subclaves */
 void Cipher::rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result)
 {
 	for(int i = 1; i < MATRIX_ORDER; ++i)
@@ -138,6 +166,9 @@ void Cipher::rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned
 	result[MATRIX_ORDER - 1] = vec[0];
 }
 
+/**
+ * Rota la columna especificada con el parametro "column" hacia la izquierda de la matriz ingresada
+ * */
 void Cipher::rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int column)
 {
 	unsigned char aux = vec[0][column];
@@ -150,6 +181,9 @@ void Cipher::rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int col
 	vec[MATRIX_ORDER - 1][column] = aux;
 }
 
+/**
+ * Rota la columna especificada con el parametro "column" hacia la derecha de la matriz ingresada
+ * */
 void Cipher::rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int column)
 {
 	unsigned char aux = vec[MATRIX_ORDER - 1][column];
@@ -162,6 +196,9 @@ void Cipher::rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int co
 	vec[0][column] = aux;
 }
 
+/**
+ * Realiza un XOR byte a byte del vector vec1 con el vector vec2 y el resultado de cada operacion lo guarda en vec_result
+ * */
 void Cipher::xorBetweenVectors(const vector<unsigned char> &vec1, const vector<unsigned char> &vec2, vector<unsigned char> &vec_result)
 {
 	for(int i = 0; i < MATRIX_ORDER; ++i)
@@ -170,13 +207,14 @@ void Cipher::xorBetweenVectors(const vector<unsigned char> &vec1, const vector<u
 	}
 }
 
-void Cipher::addRoundKey(std::vector<std::vector<unsigned char>> &state)
-{
-	std::vector<std::vector<unsigned char>> qye = {{0x2b, 0x7e, 0x15, 0x16}, {0x28, 0xae, 0xd2, 0xa6}, {0xab, 0xf7, 0x15, 0x88}, {0x09, 0xcf, 0x4f, 0x3c}};	
 
+/** ---------------------------------- Funciones principales del algoritmo de cifreado -------------------------------------- **/
+
+void Cipher::addRoundKey(std::vector<std::vector<unsigned char>> &state, int current_round)
+{
 	for(int i = 0; i < MATRIX_ORDER; ++i)
 	{
-		xorBetweenVectors(state[i], qye[i], state[i]);
+		xorBetweenVectors(state[i], this->key[(current_round * MATRIX_ORDER) + i], state[i]);
 	}
 }
 
@@ -219,6 +257,8 @@ void Cipher::mixColumns(std::vector<std::vector<unsigned char>> &state)
 		state[j] = temp;
 	}
 }
+
+/** ---------------------------------- Funciones principales del algoritmo de decifreado -------------------------------------- **/
 
 void Cipher::invShiftRows(std::vector<std::vector<unsigned char>> &state)
 {
