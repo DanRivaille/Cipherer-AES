@@ -1,6 +1,7 @@
 #include "Tables.h"
 
 #include "Cipher.h"
+#include <iostream>
 
 using namespace std;
 
@@ -56,39 +57,43 @@ void Cipher::setKey(unsigned char *new_key)
 	}
 }
 
-unsigned char *Cipher::cifrate(unsigned char *text)
+unsigned char *Cipher::cifrate(string text)
 {
+	cout << text << endl;
+
 	//se crean los bloques de 128 bits que se cifraran
-	expandText();
+	vector<vector<vector<unsigned char>>> states = expandBlocks(text);
 
-	std::vector<std::vector<unsigned char>> state = {{0x32, 0x43, 0xf6, 0xa8}, {0x88, 0x5a, 0x30, 0x8d}, {0x31, 0x31, 0x98, 0xa2}, {0xe0, 0x37, 0x07, 0x34}};
-
-	show(state);
-
-	initialRoundCifrate(state);
-
-	for(int round = 1; round < CANT_ROUNDS; ++round)
+	for(auto &state : states)
 	{
-		standardRoundCifrate(state, round);
+		initialRoundCifrate(state);
+
+		for(int round = 1; round < CANT_ROUNDS; ++round)
+		{
+			standardRoundCifrate(state, round);
+		}
+
+		finalRoundCifrate(state);
 	}
 
-	finalRoundCifrate(state);
-
-	decifrate(state);
+	decifrate(states);
 }
 
-unsigned char *Cipher::decifrate(std::vector<std::vector<unsigned char>> &state)
+unsigned char *Cipher::decifrate(vector<vector<vector<unsigned char>>> &states)
 {
-	initialRoundDecifrate(state);
-
-	for(int round = CANT_ROUNDS - 1; round > 0; --round)
+	for(auto &state : states)
 	{
-		standardRoundDecifrate(state, round);
+		initialRoundDecifrate(state);
+
+		for(int round = CANT_ROUNDS - 1; round > 0; --round)
+		{
+			standardRoundDecifrate(state, round);
+		}
+
+		finalRoundDecifrate(state);
 	}
 
-	finalRoundDecifrate(state);
-
-	show(state);
+	cout << getText(states) << endl;
 }
 
 /** ----------------------------- Rondas del modo de cifrado ----------------------------- **/
@@ -148,9 +153,56 @@ void Cipher::finalRoundDecifrate(std::vector<std::vector<unsigned char>> &state)
 /**
  * Expande el texto de forma que se armen los bloques de 128 bits para poder cifrar cada uno de ellos
  */
-void Cipher::expandText(void)
+vector<vector<vector<unsigned char>>> Cipher::expandBlocks(string text)
 {
+	int size = (text.size() / 16) + 1;
+	vector<vector<vector<unsigned char>>> states(size);
+	int current_char = 0;
 
+	for(int i = 0; i < size; ++i)
+	{
+		states[i].resize(MATRIX_ORDER);
+
+		for(int j = 0; j < MATRIX_ORDER; ++j)
+		{
+			states[i][j].resize(MATRIX_ORDER);
+
+			for(int k = 0; k < MATRIX_ORDER; ++k)
+			{
+				if(current_char < text.size())
+				{
+					states[i][j][k] = (unsigned char) text[current_char];
+					current_char++;	
+				}
+				else
+				{
+					states[i][j][k] = (unsigned char) ((16 * size) - current_char);
+				}
+			}
+		}
+	}
+
+	return states;
+}
+
+string Cipher::getText(vector<vector<vector<unsigned char>>> &states)
+{
+	string text;
+	int relleno = states[states.size() - 1][MATRIX_ORDER - 1][MATRIX_ORDER - 1];
+
+	for(int i = 0; i < states.size(); ++i)
+	{
+		for(auto column : states[i])
+		{
+			for(auto byte : column)
+			{
+				if(byte > (MATRIX_ORDER * MATRIX_ORDER))
+					text.push_back(byte);
+			}
+		}
+	}
+
+	return text;
 }
 
 /**

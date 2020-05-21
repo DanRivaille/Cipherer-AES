@@ -2,6 +2,7 @@
 #define CIPHER_H
 
 #include "definitions.h"
+#include <string>
 
 using namespace std;
 
@@ -13,8 +14,8 @@ class Cipher
 
 		void setKey(unsigned char *new_key);
 
-		unsigned char *cifrate(unsigned char *text);
-		unsigned char *decifrate(std::vector<std::vector<unsigned char>> &state);
+		unsigned char *cifrate(string text);
+		unsigned char *decifrate(vector<vector<vector<unsigned char>>> &states);
 
 	private:
 		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);
@@ -25,7 +26,8 @@ class Cipher
 		void standardRoundDecifrate(std::vector<std::vector<unsigned char>> &state, int current_round);
 		void finalRoundDecifrate(std::vector<std::vector<unsigned char>> &state);
 
-		void expandText(void);
+		vector<vector<vector<unsigned char>>> expandBlocks(string text);
+		string getText(vector<vector<vector<unsigned char>>> &states);
 		void rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result);
 		void rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int column);
 		void rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int column);
