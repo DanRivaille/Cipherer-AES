@@ -4,6 +4,18 @@
 
 using namespace std;
 
+void show(std::vector<std::vector<unsigned char>> v)
+{
+	for(int i = 0; i < 4; ++i)
+	{
+		for(int j = 0; j < 4; ++j)
+		{
+			printf("%2x ", v[i][j]);
+		}
+		printf("\n");
+	}
+}
+
 Cipher::Cipher(unsigned char *new_key = NULL)
 {
 	this->key.resize(MATRIX_ORDER * (CANT_ROUNDS + 1));
@@ -50,17 +62,11 @@ unsigned char *Cipher::cifrate(unsigned char *text)
 
 	std::vector<std::vector<unsigned char>> ad = {{0x32, 0x43, 0xf6, 0xa8}, {0x88, 0x5a, 0x30, 0x8d}, {0x31, 0x31, 0x98, 0xa2}, {0xe0, 0x37, 0x07, 0x34}};	
 
+	std::vector<std::vector<unsigned char>> sub = {{0x19, 0x3d, 0xe3, 0xbe}, {0xa0, 0xf4, 0xe2, 0x2b}, {0x9a, 0xc6, 0x8d, 0x2a}, {0xe9, 0xf8, 0x48, 0x08}};
 
-	addRoundKey(ad);
+	subBytes(sub);
 
-	for(int i = 0; i < 4; ++i)
-	{
-		for(int j = 0; j < 4; ++j)
-		{
-			printf("%2x ", ad[i][j]);
-		}
-		printf("\n");
-	}
+	show(sub);
 
 	//se crean los bloques de 128 bits que se cifraran
 	expandText();
@@ -115,7 +121,7 @@ void Cipher::xorBetweenVectors(const vector<unsigned char> &vec1, const vector<u
 
 void Cipher::addRoundKey(std::vector<std::vector<unsigned char>> &state)
 {
-std::vector<std::vector<unsigned char>> qye = {{0x2b, 0x7e, 0x15, 0x16}, {0x28, 0xae, 0xd2, 0xa6}, {0xab, 0xf7, 0x15, 0x88}, {0x09, 0xcf, 0x4f, 0x3c}};	
+	std::vector<std::vector<unsigned char>> qye = {{0x2b, 0x7e, 0x15, 0x16}, {0x28, 0xae, 0xd2, 0xa6}, {0xab, 0xf7, 0x15, 0x88}, {0x09, 0xcf, 0x4f, 0x3c}};	
 
 	for(int i = 0; i < MATRIX_ORDER; ++i)
 	{
@@ -130,7 +136,13 @@ void Cipher::shiftRows(std::vector<std::vector<unsigned char>> &state)
 
 void Cipher::subBytes(std::vector<std::vector<unsigned char>> &state)
 {
-
+	for(auto &column : state)
+	{
+		for(auto &byte : column)
+		{
+			byte = Tables::sbox[byte];
+		}
+	}
 }
 
 void Cipher::mixColumns(std::vector<std::vector<unsigned char>> &state)
