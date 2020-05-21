@@ -19,7 +19,7 @@ class Cipher
 		void standardRound(void);
 		void finalRound(void);
 
-		void scaleText(void);
+		void expandText(void);
 		void rotWord(void);
 		void xorBetweenVectors(void);
 
