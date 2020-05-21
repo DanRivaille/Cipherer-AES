@@ -46,39 +46,50 @@ void Cipher::setKey(unsigned char *new_key)
 				new_key++;
 			}
 		}
+
+		calculateSubKeys();
 	}
 	else
 	{
 		printf("ERROR::setKey::initial_key null");
 	}
+}
 
-	//calcular todas las subclaves
+void Cipher::calculateSubKeys(void)
+{
+	//Recorre columna por columna, empezando por la primera columna de la primera subclave
+	for(int current_key = 1; current_key <= CANT_ROUNDS; ++current_key)
+	{
+		//Se aplica rotWord a la columna de la subclave anterior y se guarda en la primera columna de la sublave actual
+		rotWord(this->key[(current_key * MATRIX_ORDER) - 1], this->key[current_key * MATRIX_ORDER]);
+
+		//Se recorre la columna actual, osea la primera de la subclave actual
+		for(int j = 0; j < MATRIX_ORDER; ++j)
+		{
+			//Se aplica subBytes sobre cada byte de la columna y se guarda en la misma posicion
+			this->key[current_key * MATRIX_ORDER][j] = Tables::sbox[this->key[current_key * MATRIX_ORDER][j]];
+
+			//Se aplica un xor con el byte correspondiente de la primera columna de la sublave anterior
+			this->key[current_key * MATRIX_ORDER][j] ^= this->key[(current_key - 1) * MATRIX_ORDER][j];
+		}
+
+		//Se aplica un xor con el primer byte de la columna, con el byte correspondiente de la tabla rcon
+		this->key[current_key * MATRIX_ORDER][0] ^= Tables::rcon[current_key - 1];
+
+		//Se calcula las 3 columnas restantes de la subclave actual
+		for(int j = 1; j < MATRIX_ORDER; ++j)
+		{
+			//Se aplica un xor byte a byte de la columna anterior, con la columna 4 posiciones atras y se guarda en la columna actual
+			xorBetweenVectors(
+				this->key[(current_key * MATRIX_ORDER) + j - 1], 
+				this->key[((current_key - 1) * MATRIX_ORDER) + j], 
+				this->key[(current_key * MATRIX_ORDER) + j]);
+		}
+	}
 }
 
 unsigned char *Cipher::cifrate(unsigned char *text)
 {
-	std::vector<std::vector<unsigned char>> v = {{0xda, 0xbf, 0x5d, 0x30}, {0xe0, 0xb4, 0x52, 0xae}, {0xb8, 0x41, 0x11, 0xf1}, {0x1e, 0x27, 0x98, 0xe5}};
-	std::vector<std::vector<unsigned char>> v2 = {{0x49, 0xdb, 0x87, 0x3b}, {0x45, 0x39, 0x53, 0x89}, {0x7f, 0x02, 0xd2, 0xf1}, {0x77, 0xde, 0x96, 0x1a}};
-
-	std::vector<std::vector<unsigned char>> ad = {{0x32, 0x43, 0xf6, 0xa8}, {0x88, 0x5a, 0x30, 0x8d}, {0x31, 0x31, 0x98, 0xa2}, {0xe0, 0x37, 0x07, 0x34}};	
-
-	std::vector<std::vector<unsigned char>> sub = {{0x19, 0x3d, 0xe3, 0xbe}, {0xa0, 0xf4, 0xe2, 0x2b}, {0x9a, 0xc6, 0x8d, 0x2a}, {0xe9, 0xf8, 0x48, 0x08}};
-
-	subBytes(sub);
-
-	show(sub);
-	printf("\n");
-
-	shiftRows(sub);
-
-	show(sub);
-	printf("\n");
-
-	invShiftRows(sub);
-
-	show(sub);
-	printf("\n");
-
 	//se crean los bloques de 128 bits que se cifraran
 	expandText();
 
@@ -117,16 +128,14 @@ void Cipher::expandText(void)
 
 }
 
-void Cipher::rotWord(std::vector<unsigned char> &vec)
+void Cipher::rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result)
 {
-	unsigned char aux = vec[0];
-
 	for(int i = 1; i < MATRIX_ORDER; ++i)
 	{
-		vec[i - 1] = vec[i];
+		result[i - 1] = vec[i];
 	}
 
-	vec[MATRIX_ORDER - 1] = aux;
+	result[MATRIX_ORDER - 1] = vec[0];
 }
 
 void Cipher::rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int column)

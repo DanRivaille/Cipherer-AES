@@ -22,7 +22,7 @@ class Cipher
 		void finalRound(void);
 
 		void expandText(void);
-		void rotWord(std::vector<unsigned char> &vec);
+		void rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result);
 		void rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int column);
 		void rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int column);
 		void xorBetweenVectors(const vector<unsigned char> &vec1, const vector<unsigned char> &vec2, vector<unsigned char> &vec_result);
@@ -35,6 +35,8 @@ class Cipher
 		void invShiftRows(std::vector<std::vector<unsigned char>> &state);
 		void invSubBytes(std::vector<std::vector<unsigned char>> &state);
 		void invMixColumns(std::vector<std::vector<unsigned char>> &state);
+
+		void calculateSubKeys(void);
 
 		std::vector<std::vector<unsigned char>> key;
 
