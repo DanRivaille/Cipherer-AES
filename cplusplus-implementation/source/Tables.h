@@ -5,7 +5,7 @@ class Tables
 {
 	public:
 		static unsigned char sbox[256];
-		static unsigned char inv_s[256];
+		static unsigned char inv_sbox[256];
 		static unsigned char mul2[256];
 		static unsigned char mul3[256];
 		static unsigned char mul9[256];

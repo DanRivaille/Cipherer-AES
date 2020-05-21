@@ -64,9 +64,18 @@ unsigned char *Cipher::cifrate(unsigned char *text)
 
 	std::vector<std::vector<unsigned char>> sub = {{0x19, 0x3d, 0xe3, 0xbe}, {0xa0, 0xf4, 0xe2, 0x2b}, {0x9a, 0xc6, 0x8d, 0x2a}, {0xe9, 0xf8, 0x48, 0x08}};
 
+	show(sub);
+	printf("\n");
+
 	subBytes(sub);
 
 	show(sub);
+	printf("\n");
+
+	invSubBytes(sub);
+
+	show(sub);
+	printf("\n");
 
 	//se crean los bloques de 128 bits que se cifraran
 	expandText();
@@ -175,7 +184,13 @@ void Cipher::invShiftRows(std::vector<std::vector<unsigned char>> &state)
 
 void Cipher::invSubBytes(std::vector<std::vector<unsigned char>> &state)
 {
-
+	for(auto &column : state)
+	{
+		for(auto &byte : column)
+		{
+			byte = Tables::inv_sbox[byte];
+		}
+	}
 }
 
 void Cipher::invMixColumns(std::vector<std::vector<unsigned char>> &state)
