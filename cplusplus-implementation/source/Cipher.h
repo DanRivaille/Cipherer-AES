@@ -4,18 +4,25 @@
 #include "definitions.h"
 #include <string>
 
+
+#include <iostream>
+
+using namespace std;
+
+#define CIFRATE 1
+#define DECIFRATE 2
+
 using namespace std;
 
 class Cipher
 {
 	public:
 		Cipher(unsigned char *new_key);
-		~Cipher(void);
 
 		void setKey(unsigned char *new_key);
 
-		unsigned char *cifrate(string text);
-		unsigned char *decifrate(vector<vector<vector<unsigned char>>> &states);
+		string cifrate(string text);
+		string decifrate(string text);
 
 	private:
 		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);
@@ -26,8 +33,9 @@ class Cipher
 		void standardRoundDecifrate(std::vector<std::vector<unsigned char>> &state, int current_round);
 		void finalRoundDecifrate(std::vector<std::vector<unsigned char>> &state);
 
-		vector<vector<vector<unsigned char>>> expandBlocks(string text);
-		string getText(vector<vector<vector<unsigned char>>> &states);
+		vector<vector<vector<unsigned char>>> expandBlocks(string text, int mode);
+		string getText(vector<vector<vector<unsigned char>>> &states, int mode);
+
 		void rotWord(const std::vector<unsigned char> &vec, std::vector<unsigned char> &result);
 		void rotColumnLeft(std::vector<std::vector<unsigned char>> &vec, int column);
 		void rotColumnRight(std::vector<std::vector<unsigned char>> &vec, int column);

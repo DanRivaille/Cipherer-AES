@@ -1,22 +1,6 @@
 #include "Tables.h"
 
 #include "Cipher.h"
-#include <iostream>
-
-using namespace std;
-
-void show(std::vector<std::vector<unsigned char>> v)
-{
-	for(int i = 0; i < 4; ++i)
-	{
-		for(int j = 0; j < 4; ++j)
-		{
-			printf("%2x ", v[j][i]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-}
 
 Cipher::Cipher(unsigned char *new_key = NULL)
 {
@@ -30,39 +14,27 @@ Cipher::Cipher(unsigned char *new_key = NULL)
 		setKey(new_key);
 }
 
-Cipher::~Cipher(void)
-{
-
-}
-
 void Cipher::setKey(unsigned char *new_key)
 {
-	if(new_key != NULL)
+	for(int column = 0; column < MATRIX_ORDER; ++column)
 	{
-		for(int column = 0; column < MATRIX_ORDER; ++column)
+		for(auto &byte : this->key[column])
 		{
-			for(auto &byte : this->key[column])
-			{
-				byte =  static_cast<int> (*new_key);
+			byte =  static_cast<int> (*new_key);
 
-				new_key++;
-			}
+			new_key++;
 		}
+	}
 
-		calculateSubKeys();
-	}
-	else
-	{
-		printf("ERROR::setKey::initial_key null");
-	}
+	calculateSubKeys();
 }
 
-unsigned char *Cipher::cifrate(string text)
+string Cipher::cifrate(string text)
 {
 	cout << text << endl;
 
 	//se crean los bloques de 128 bits que se cifraran
-	vector<vector<vector<unsigned char>>> states = expandBlocks(text);
+	vector<vector<vector<unsigned char>>> states = expandBlocks(text, CIFRATE);
 
 	for(auto &state : states)
 	{
@@ -76,11 +48,13 @@ unsigned char *Cipher::cifrate(string text)
 		finalRoundCifrate(state);
 	}
 
-	decifrate(states);
+	return getText(states, CIFRATE);
 }
 
-unsigned char *Cipher::decifrate(vector<vector<vector<unsigned char>>> &states)
+string Cipher::decifrate(string text)
 {
+	vector<vector<vector<unsigned char>>> states = expandBlocks(text, DECIFRATE);	
+
 	for(auto &state : states)
 	{
 		initialRoundDecifrate(state);
@@ -93,7 +67,7 @@ unsigned char *Cipher::decifrate(vector<vector<vector<unsigned char>>> &states)
 		finalRoundDecifrate(state);
 	}
 
-	cout << getText(states) << endl;
+	return getText(states, DECIFRATE);
 }
 
 /** ----------------------------- Rondas del modo de cifrado ----------------------------- **/
@@ -153,10 +127,17 @@ void Cipher::finalRoundDecifrate(std::vector<std::vector<unsigned char>> &state)
 /**
  * Expande el texto de forma que se armen los bloques de 128 bits para poder cifrar cada uno de ellos
  */
-vector<vector<vector<unsigned char>>> Cipher::expandBlocks(string text)
+vector<vector<vector<unsigned char>>> Cipher::expandBlocks(string text, int mode)
 {
-	int size = (text.size() / 16) + 1;
+	int size;
+
+	if(CIFRATE == mode)
+		size = (text.size() / 16) + 1;
+	else
+		size = text.size() / 16;
+
 	vector<vector<vector<unsigned char>>> states(size);
+
 	int current_char = 0;
 
 	for(int i = 0; i < size; ++i)
@@ -185,7 +166,7 @@ vector<vector<vector<unsigned char>>> Cipher::expandBlocks(string text)
 	return states;
 }
 
-string Cipher::getText(vector<vector<vector<unsigned char>>> &states)
+string Cipher::getText(vector<vector<vector<unsigned char>>> &states, int mode)
 {
 	string text;
 	int relleno = states[states.size() - 1][MATRIX_ORDER - 1][MATRIX_ORDER - 1];
@@ -196,8 +177,15 @@ string Cipher::getText(vector<vector<vector<unsigned char>>> &states)
 		{
 			for(auto byte : column)
 			{
-				if(byte > (MATRIX_ORDER * MATRIX_ORDER))
+				if(DECIFRATE == mode)
+				{
+					if(byte > 16)
+						text.push_back(byte);
+				}
+				else
+				{
 					text.push_back(byte);
+				}
 			}
 		}
 	}

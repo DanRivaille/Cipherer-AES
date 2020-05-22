@@ -7,7 +7,16 @@ int main(int argc, char const *argv[])
 	
 	Cipher cipher(initial_key);
 
-	cipher.cifrate("Hola como estas? yo bien y tu?je");
+	string text = "Hola";
+	string texto_cifrado;
+
+	texto_cifrado = cipher.cifrate(text);
+
+	cout << "Texto inicial: " << text << endl;
+
+	cout << "Texto cifrado: " << texto_cifrado << endl;
+
+	cout << "Texto final: " << cipher.decifrate(texto_cifrado) << endl;
 
 	return 0;
 }
