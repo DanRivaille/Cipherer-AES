@@ -18,10 +18,10 @@ class Cipher
 	public:
 		Cipher(void);
 
-		void setKey(unsigned char *new_key);
+		void setKey(string *new_key);
 
-		string cifrate(string text, unsigned char *new_key = NULL);
-		string decifrate(string text, unsigned char *new_key = NULL);
+		string cifrate(string text, string *new_key = NULL);
+		string decifrate(string text, string *new_key = NULL);
 
 	private:
 		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);

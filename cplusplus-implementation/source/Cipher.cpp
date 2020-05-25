@@ -11,24 +11,19 @@ Cipher::Cipher(void)
 	}
 }
 
-void Cipher::setKey(unsigned char *new_key)
+void Cipher::setKey(string *new_key)
 {
-	if(new_key != NULL)
+	if((new_key != NULL) && (new_key->size() >= 16))
 	{
+		string::iterator character = new_key->begin();
+
 		for(int column = 0; column < MATRIX_ORDER; ++column)
 		{
 			for(auto &byte : this->key[column])
 			{
-				//Si la clave no es de 16 caracteres, se rompen los dos ciclos
-				if('\0' == *new_key)
-				{
-					column = MATRIX_ORDER;
-					break;
-				}
+				byte =  static_cast<int> (*character);
 
-				byte =  static_cast<int> (*new_key);
-
-				new_key++;
+				++character;
 			}
 		}
 
@@ -36,7 +31,7 @@ void Cipher::setKey(unsigned char *new_key)
 	}
 }
 
-string Cipher::cifrate(string text, unsigned char *new_key)
+string Cipher::cifrate(string text, string *new_key)
 {
 	if(new_key != NULL)
 		setKey(new_key);
@@ -59,7 +54,7 @@ string Cipher::cifrate(string text, unsigned char *new_key)
 	return getText(states, CIFRATE);
 }
 
-string Cipher::decifrate(string text, unsigned char *new_key)
+string Cipher::decifrate(string text, string *new_key)
 {
 	if(new_key != NULL)
 		setKey(new_key);
