@@ -1,10 +1,19 @@
 import java.util.ArrayList;
 
+/**
+ * Clase que modela un cifrador usando el algoritmo AES, implementa el patron singleton.
+ * Se puede cifrar/decifrar otorgando una clave, o usando una clave anteriormente establecida, por lo tanto
+ * si se va a ocupar una sola clave, hay que preocuparse de que se haya establecido almenos una vez usando el metodo
+ * setKey o con las versiones de los metodos cifrate y decifrate que reciben una clave por parametro.
+ * @author DanSantosAA
+ * @version 25-05-2020
+ * */
+
 public class Cipher {
 
 	//Atributos
-	private char[][] key;
-	private static final Cipher cipher = new Cipher();
+	private char[][] key;									//Clave de cifrado y decifrado actual
+	private static final Cipher cipher = new Cipher();		//Unica instancia de la clase
 
 	/**
 	 * Funcion encargada de obtener la unica instancia del cipher puesto que la clas aplica el patron singleton.
@@ -38,6 +47,12 @@ public class Cipher {
 		}
 	}
 
+	/**
+	 * Metodo que cifra el texto usando la clave ingresada, y devuelve el texto cifrado con AES.
+	 * @param text texto a cifrar.
+	 * @param key clave del cifrado.
+	 * @return texto cifrado con la clave ingresada.
+	 * */
 	public String cifrate(String text, String key) {
 		if(key != null)
 			setKey(key);
@@ -62,6 +77,21 @@ public class Cipher {
 		return getText(states, CIFRATE_MODE);
 	}
 
+	/**
+	 * Metodo que cifra el texto ingresado usando la clave establecida anteriormente, y devuelve el texto cifrado con AES.
+	 * @param text texto a cifrar.
+	 * @return texto cifrado con la clave ingresada.
+	 * */
+	public String cifrate(String text) {
+		return cifrate(text, null);
+	}
+
+	/**
+	 * Metodo que decifra el texto cifrado usando la clave ingresada, y devuelve el texto decifrado.
+	 * @param text texto a decifrar.
+	 * @param key clave del decifrado.
+	 * @return texto decifrado con la clave ingresada.
+	 * */
 	public String decifrate(String text, String key) {
 		if(key != null)
 			setKey(key);
@@ -86,7 +116,19 @@ public class Cipher {
 		return getText(states, DECIFRATE_MODE);
 	}
 
+	/**
+	 * Metodo que decifra el texto cifrado ingresado usando la clave establecida anteriormente, y devuelve el texto decifrado.
+	 * @param text texto a decifrar.
+	 * @return texto decifrado con la clave ingresada.
+	 * */
+	public String decifrate(String text) {
+		return decifrate(text, null);
+	}
+
 	/* ------------------------- Funciones auxiliares -------------------------- */
+	/**
+	 * Metodo que calcula las 10 subclaves a partir de la clave actual.
+	 * */
 	private void calculateSubKeys() {
 		for(int currentKey = 1; currentKey <= CANTS_ROUNDS; ++currentKey) {
 			rotWord(this.key[(currentKey * MATRIX_ORDER) - 1], this.key[currentKey * MATRIX_ORDER]);
@@ -172,6 +214,11 @@ public class Cipher {
 		return text;
 	}
 
+	/**
+	 * Metodo que realiza la funcion rotword, osea que rota una columna de la clave.
+	 * @param columnOrigin columna de donde se sacaran los bytes a rotar.
+	 * @param columnDestiny columna en donde se guardaran los bytes resultantes de la rotacion.
+	 * */
 	private void rotWord(char columnOrigin[], char columnDestiny[]) {
 		columnDestiny[MATRIX_ORDER - 1] = columnOrigin[0];
 
@@ -180,28 +227,45 @@ public class Cipher {
 		}
 	}
 
-	private void rotColumnLeft(char vector[][], int column)
+	/**
+	 * Metodo que rota la columna "column" de la matriz "matrix" una posicion hacia la izquierda.
+	 * @param matrix matriz que en donde se ubica la columna a rotar.
+	 * @param column numero de la columna a rotar.
+	 * */
+	private void rotColumnLeft(char matrix[][], int column)
 	{
-		char aux = vector[0][column];
+		char aux = matrix[0][column];
 
 		for(int i = 1; i < MATRIX_ORDER; ++i) {
-			vector[i - 1][column] = vector[i][column];
+			matrix[i - 1][column] = matrix[i][column];
 		}
 
-		vector[MATRIX_ORDER - 1][column] = aux;
+		matrix[MATRIX_ORDER - 1][column] = aux;
 	}
 
-	private void rotColumnRight(char vector[][], int column)
+	/**
+	 * Metodo que rota la columna "column" de la matriz "matrix" una posicion hacia la derecha.
+	 * @param matrix matriz que en donde se ubica la columna a rotar.
+	 * @param column numero de la columna a rotar.
+	 * */
+	private void rotColumnRight(char matrix[][], int column)
 	{
-		char aux = vector[MATRIX_ORDER - 1][column];
+		char aux = matrix[MATRIX_ORDER - 1][column];
 
 		for(int i = MATRIX_ORDER - 1; i > 0; --i) {
-			vector[i][column] = vector[i - 1][column];
+			matrix[i][column] = matrix[i - 1][column];
 		}
 
-		vector[0][column] = aux;
+		matrix[0][column] = aux;
 	}
 
+	/**
+	 * Metodo que realiza un XOR entre cada byte de los vectores "vector1" y "vector2" y el resultado
+	 * lo guarda en "vectorResult".
+	 * @param vector1 primer vector operando de la operacion XOR.
+	 * @param vector2 segundo vector operando de la operacion XOR.
+	 * @param vectorResult vector resultante de la operacion XOR entre "vector1" y "vector2".
+	 * */
 	private void xorBtweenVector(char vector1[], char vector2[], char vectorRestult[]) {
 		for(int i = 0; i < MATRIX_ORDER; ++i) {
 			vectorRestult[i] = (char) (vector1[i] ^ vector2[i]);
@@ -296,9 +360,9 @@ public class Cipher {
 	}
 
 
-	private static final byte MATRIX_ORDER = 4;
-	private static final byte CANTS_ROUNDS = 10;
-	private static final byte RADIX = 16;
-	public static final byte CIFRATE_MODE = 1;
-	public static final byte DECIFRATE_MODE = 2;
+	private static final byte MATRIX_ORDER = 4;			//Guarda el orden de las matrices estandar de la clase.
+	private static final byte CANTS_ROUNDS = 10;		//Guarda la cantidad de rounds que realizara el algoritmo.
+	private static final byte RADIX = 16;				//Guarda la base de la representacion de los numeros.
+	public static final byte CIFRATE_MODE = 1;			//Indica que el modo es de cifrado.
+	public static final byte DECIFRATE_MODE = 2;		//Indica que el modo es de decifrado.
 }
