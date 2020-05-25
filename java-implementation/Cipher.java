@@ -2,17 +2,22 @@ import java.util.ArrayList;
 
 public class Cipher {
 
-	public static void showByte(char byteToShow) {
-		System.out.print(String.format("%2x ", (int) byteToShow));
-	}
-	
 	//Atributos
 	private char[][] key;
+	private static final Cipher cipher = new Cipher();
+
+	/**
+	 * Funcion encargada de obtener la unica instancia del cipher puesto que la clas aplica el patron singleton.
+	 * @return unica instancia de la clase.
+	 * */
+	public static Cipher getInstance() {
+		return cipher;
+	}
 
 	/**
 	 * Constructor por defecto de la clase, dimensiona la matriz que guardara tanto la clave como las subclaves.
 	 * */
-	public Cipher() {
+	private Cipher() {
 		this.key = new char[MATRIX_ORDER * (CANTS_ROUNDS + 1)][MATRIX_ORDER];
 	}
 

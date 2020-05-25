@@ -19,7 +19,7 @@ public class Main {
 			texto = "Hola";
 		}
 
-		Cipher cipher = new Cipher();
+		Cipher cipher = Cipher.getInstance();
 
 		texto_cifrado = cipher.cifrate(texto, key);
 		texto_decifrado = cipher.decifrate(texto_cifrado, null);
