@@ -15,7 +15,7 @@ OBJS_FILES = $(DIR_SOURCE)/main.cpp  $(DIR_OBJS)/Tables.o $(DIR_OBJS)/Cipher.o
 $(EXE_NAME): $(OBJS_FILES)
 	$(CC) $^ $(CFLAGS) -o $(EXE_NAME)
 
-$(DIR_OBJS)/Cipher.o: $(DIR_SOURCE)/Cipher.cpp  $(DIR_SOURCE)/Cipher.h $(DIR_SOURCE)/definitions.h
+$(DIR_OBJS)/Cipher.o: $(DIR_SOURCE)/Cipher.cpp  $(DIR_SOURCE)/Cipher.h 
 	$(CC) $(CFLAGS) -c $(DIR_SOURCE)/Cipher.cpp -o $(DIR_OBJS)/Cipher.o
 
 $(DIR_OBJS)/Tables.o:  $(DIR_SOURCE)/Tables.cpp  $(DIR_SOURCE)/Tables.h
