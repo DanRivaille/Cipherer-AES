@@ -13,17 +13,27 @@ Cipher::Cipher(void)
 
 void Cipher::setKey(unsigned char *new_key)
 {
-	for(int column = 0; column < MATRIX_ORDER; ++column)
+	if(new_key != NULL)
 	{
-		for(auto &byte : this->key[column])
+		for(int column = 0; column < MATRIX_ORDER; ++column)
 		{
-			byte =  static_cast<int> (*new_key);
+			for(auto &byte : this->key[column])
+			{
+				//Si la clave no es de 16 caracteres, se rompen los dos ciclos
+				if('\0' == *new_key)
+				{
+					column = MATRIX_ORDER;
+					break;
+				}
 
-			new_key++;
+				byte =  static_cast<int> (*new_key);
+
+				new_key++;
+			}
 		}
-	}
 
-	calculateSubKeys();
+		calculateSubKeys();
+	}
 }
 
 string Cipher::cifrate(string text, unsigned char *new_key)
