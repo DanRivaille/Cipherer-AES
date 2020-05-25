@@ -7,7 +7,6 @@
 
 #define MATRIX_ORDER 4
 #define CANT_ROUNDS 10
-#define RADIX 16
 #define CIFRATE 1
 #define DECIFRATE 2
 

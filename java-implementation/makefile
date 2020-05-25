@@ -1,5 +1,5 @@
 all:
-	javac *.java -d bin/
+	javac *.java -d binaries/
 
 clean:
-	rm bin/*.class
+	rm binaries*.class
