@@ -17,12 +17,12 @@ using namespace std;
 class Cipher
 {
 	public:
-		Cipher(unsigned char *new_key);
+		Cipher(void);
 
 		void setKey(unsigned char *new_key);
 
-		string cifrate(string text);
-		string decifrate(string text);
+		string cifrate(string text, unsigned char *new_key = NULL);
+		string decifrate(string text, unsigned char *new_key = NULL);
 
 	private:
 		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);

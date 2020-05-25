@@ -2,16 +2,13 @@
 
 #include "Cipher.h"
 
-Cipher::Cipher(unsigned char *new_key = NULL)
+Cipher::Cipher(void)
 {
 	this->key.resize(MATRIX_ORDER * (CANT_ROUNDS + 1));
 	for(int i = 0; i < MATRIX_ORDER * (CANT_ROUNDS + 1); ++i)
 	{
 		this->key[i].resize(MATRIX_ORDER);
 	}
-
-	if(new_key != NULL)
-		setKey(new_key);
 }
 
 void Cipher::setKey(unsigned char *new_key)
@@ -29,9 +26,10 @@ void Cipher::setKey(unsigned char *new_key)
 	calculateSubKeys();
 }
 
-string Cipher::cifrate(string text)
+string Cipher::cifrate(string text, unsigned char *new_key)
 {
-	cout << text << endl;
+	if(new_key != NULL)
+		setKey(new_key);
 
 	//se crean los bloques de 128 bits que se cifraran
 	vector<vector<vector<unsigned char>>> states = expandBlocks(text, CIFRATE);
@@ -51,8 +49,11 @@ string Cipher::cifrate(string text)
 	return getText(states, CIFRATE);
 }
 
-string Cipher::decifrate(string text)
+string Cipher::decifrate(string text, unsigned char *new_key)
 {
+	if(new_key != NULL)
+		setKey(new_key);
+
 	vector<vector<vector<unsigned char>>> states = expandBlocks(text, DECIFRATE);	
 
 	for(auto &state : states)
