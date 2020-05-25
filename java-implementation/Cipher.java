@@ -58,7 +58,27 @@ public class Cipher {
 	}
 
 	public String decifrate(String text, String key) {
-		return null;	
+		if(key != null)
+			setKey(key);
+
+		char states[][][] = expandBlocks(text, DECIFRATE_MODE);
+
+		for(char state[][] : states) {
+			addRoundKey(state, CANTS_ROUNDS);
+			invShiftRows(state);
+			invSubBytes(state);
+
+			for(int round = CANTS_ROUNDS - 1; round > 0; --round) {
+				addRoundKey(state, round);
+				invMixColumns(state);
+				invShiftRows(state);
+				invSubBytes(state);
+			}
+
+			addRoundKey(state, 0);
+		}
+
+		return getText(states, DECIFRATE_MODE);
 	}
 
 	/* ------------------------- Funciones auxiliares -------------------------- */
@@ -134,19 +154,14 @@ public class Cipher {
 				for(char character : column)
 				{
 					if(DECIFRATE_MODE == mode) {
-						if(character > 16){
+						if(character > 16)
 							text += character;
-							showByte(character);
-						}
 					}
 					else {
 						text += character;
-						showByte(character);
 					}
 				}
-				System.out.println();
 			}
-			System.out.println();
 		}
 
 		return text;
@@ -228,6 +243,46 @@ public class Cipher {
 			temp[1] = (char) (aux[0] ^ Tables.mul2[aux[1]] ^ Tables.mul3[aux[2]] ^ aux[3]);
 			temp[2] = (char) (aux[0] ^ aux[1] ^ Tables.mul2[aux[2]] ^ Tables.mul3[aux[3]]);
 			temp[3] = (char) (Tables.mul3[aux[0]] ^ aux[1] ^ aux[2] ^ Tables.mul2[aux[3]]);
+
+			for(int i = 0; i < MATRIX_ORDER; ++i) {
+				state[j][i] = temp[i];
+			}
+		}
+	}
+
+	private void invShiftRows(char state[][])
+	{
+		for(int i = 1; i < MATRIX_ORDER; ++i) {
+			for(int j = 0; j < i; ++j) {
+				rotColumnRight(state, i);
+			}
+		}
+	}
+
+	private void invSubBytes(char state[][])
+	{
+		for(char column[] : state) {
+			for(char character : column) {
+				character = Tables.inv_sbox[character];
+			}
+		}
+	}
+
+	private void invMixColumns(char state[][])
+	{
+		char aux[] = new char[MATRIX_ORDER];
+		char temp[] = new char[MATRIX_ORDER];
+
+		for (int j = 0; j < MATRIX_ORDER; j++)
+		{
+			for(int i = 0; i < MATRIX_ORDER; ++i) {
+				aux[i] = state[j][i];
+			}
+
+			temp[0] = (char) (Tables.mul14[aux[0]] ^ Tables.mul11[aux[1]] ^ Tables.mul13[aux[2]] ^ Tables.mul9[aux[3]]);
+			temp[1] = (char) (Tables.mul9[aux[0]] ^ Tables.mul14[aux[1]] ^ Tables.mul11[aux[2]] ^Tables.mul13[aux[3]]);
+			temp[2] = (char) (Tables.mul13[aux[0]] ^ Tables.mul9[aux[1]] ^ Tables.mul14[aux[2]] ^ Tables.mul11[aux[3]]);
+			temp[3] = (char) (Tables.mul11[aux[0]] ^ Tables.mul13[aux[1]] ^ Tables.mul9[aux[2]] ^ Tables.mul14[aux[3]]);
 
 			for(int i = 0; i < MATRIX_ORDER; ++i) {
 				state[j][i] = temp[i];
