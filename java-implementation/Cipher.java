@@ -36,8 +36,7 @@ public class Cipher {
 	public String cifrate(String text, String key) {
 		char states[][][] = expandBlocks(text, CIFRATE_MODE);
 
-
-		return null;
+		return getText(states, DECIFRATE_MODE);
 	}
 
 	public String decifrate(String text, String key) {
@@ -101,6 +100,33 @@ public class Cipher {
 		}
 
 		return states;
+	}
+
+	/**
+	 * Metodo que obtiene el texto a partir de la matriz de estados, dependiendo del modo ingresado, si es modo de cifrado
+	 * le agraga todos los caracteres, sino le agrega los caracteres validos.
+	 * */
+	private String getText(char states[][][], int mode) {
+		String text = "";
+
+		for(char state[][] : states)
+		{
+			for(char column[] : state)
+			{
+				for(char character : column)
+				{
+					if(DECIFRATE_MODE == mode) {
+						if(character > 16)
+							text += character;
+					}
+					else {
+						text += character;
+					}
+				}
+			}
+		}
+
+		return text;
 	}
 
 	private void rotWord(char columnOrigin[], char columnDestiny[]) {

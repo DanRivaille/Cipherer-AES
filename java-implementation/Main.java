@@ -4,6 +4,6 @@ public class Main {
 
 		Cipher cipher = new Cipher();
 
-		cipher.cifrate("Hola Como estas?", key);
+		System.out.println(cipher.cifrate("Hola Como estas?", key));
 	}
 }
