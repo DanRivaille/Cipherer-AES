@@ -34,9 +34,27 @@ public class Cipher {
 	}
 
 	public String cifrate(String text, String key) {
+		if(key != null)
+			setKey(key);
+
 		char states[][][] = expandBlocks(text, CIFRATE_MODE);
 
-		return getText(states, DECIFRATE_MODE);
+		for(char state[][] : states) {
+			addRoundKey(state, 0);
+
+			for(int round = 1; round < CANTS_ROUNDS; ++round) {
+				subBytes(state);
+				shiftRows(state);
+				mixColumns(state);
+				addRoundKey(state, round);
+			}
+
+			subBytes(state);
+			shiftRows(state);
+			addRoundKey(state, CANTS_ROUNDS);
+		}
+
+		return getText(states, CIFRATE_MODE);
 	}
 
 	public String decifrate(String text, String key) {
@@ -116,14 +134,19 @@ public class Cipher {
 				for(char character : column)
 				{
 					if(DECIFRATE_MODE == mode) {
-						if(character > 16)
+						if(character > 16){
 							text += character;
+							showByte(character);
+						}
 					}
 					else {
 						text += character;
+						showByte(character);
 					}
 				}
+				System.out.println();
 			}
+			System.out.println();
 		}
 
 		return text;
@@ -137,11 +160,81 @@ public class Cipher {
 		}
 	}
 
+	private void rotColumnLeft(char vector[][], int column)
+	{
+		char aux = vector[0][column];
+
+		for(int i = 1; i < MATRIX_ORDER; ++i) {
+			vector[i - 1][column] = vector[i][column];
+		}
+
+		vector[MATRIX_ORDER - 1][column] = aux;
+	}
+
+	private void rotColumnRight(char vector[][], int column)
+	{
+		char aux = vector[MATRIX_ORDER - 1][column];
+
+		for(int i = MATRIX_ORDER - 1; i > 0; --i) {
+			vector[i][column] = vector[i - 1][column];
+		}
+
+		vector[0][column] = aux;
+	}
+
 	private void xorBtweenVector(char vector1[], char vector2[], char vectorRestult[]) {
 		for(int i = 0; i < MATRIX_ORDER; ++i) {
 			vectorRestult[i] = (char) (vector1[i] ^ vector2[i]);
 		}
 	}
+
+	/* --------------------------------- Funciones del algoritmo AES ---------------------------------- */
+	private void addRoundKey(char state[][], int currentRound) {
+		for(int i = 0; i < MATRIX_ORDER; ++i) {
+			xorBtweenVector(state[i], this.key[(currentRound * MATRIX_ORDER) + i], state[i]);
+		}
+	}
+
+	private void shiftRows(char state[][])
+	{
+		for(int i = 1; i < MATRIX_ORDER; ++i) {
+			for(int j = 0; j < i; ++j) {
+				rotColumnLeft(state, i);
+			}
+		}
+	}
+
+	private void subBytes(char state[][])
+	{
+		for(char column[] : state) {
+			for(char character : column) {
+				character = Tables.sbox[character];
+			}
+		}
+	}
+
+	private void mixColumns(char state[][])
+	{
+		char aux[] = new char[MATRIX_ORDER];
+		char temp[] = new char[MATRIX_ORDER];
+
+		for (int j = 0; j < MATRIX_ORDER; j++)
+		{
+			for(int i = 0; i < MATRIX_ORDER; ++i) {
+				aux[i] = state[j][i];
+			}
+
+			temp[0] = (char) (Tables.mul2[aux[0]] ^ Tables.mul3[aux[1]] ^ aux[2] ^ aux[3]);
+			temp[1] = (char) (aux[0] ^ Tables.mul2[aux[1]] ^ Tables.mul3[aux[2]] ^ aux[3]);
+			temp[2] = (char) (aux[0] ^ aux[1] ^ Tables.mul2[aux[2]] ^ Tables.mul3[aux[3]]);
+			temp[3] = (char) (Tables.mul3[aux[0]] ^ aux[1] ^ aux[2] ^ Tables.mul2[aux[3]]);
+
+			for(int i = 0; i < MATRIX_ORDER; ++i) {
+				state[j][i] = temp[i];
+			}
+		}
+	}
+
 
 	private static final byte MATRIX_ORDER = 4;
 	private static final byte CANTS_ROUNDS = 10;
