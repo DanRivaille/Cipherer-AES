@@ -28,6 +28,8 @@ public class Cipher {
 					this.key[i][j] = new_key.charAt((i * MATRIX_ORDER) + j);
 				}
 			}
+
+			calculateSubKeys();
 		}
 	}
 
@@ -40,11 +42,38 @@ public class Cipher {
 	}
 
 	/* ------------------------- Funciones auxiliares -------------------------- */
+	private void calculateSubKeys() {
+		for(int currentKey = 1; currentKey <= CANTS_ROUNDS; ++currentKey) {
+			rotWord(this.key[(currentKey * MATRIX_ORDER) - 1], this.key[currentKey * MATRIX_ORDER]);
+
+			for(int j = 0; j < MATRIX_ORDER; ++j) {
+				this.key[currentKey * MATRIX_ORDER][j] = Tables.sbox[this.key[currentKey * MATRIX_ORDER][j]];
+
+				this.key[currentKey * MATRIX_ORDER][j] ^= this.key[(currentKey - 1) * MATRIX_ORDER][j];
+			}
+
+			this.key[currentKey * MATRIX_ORDER][0] ^= Tables.rcon[currentKey - 1];
+
+			for(int j = 1; j < MATRIX_ORDER; ++j) {
+				xorBtweenVector(
+					this.key[(currentKey * MATRIX_ORDER) + j - 1],
+					this.key[((currentKey - 1) * MATRIX_ORDER) + j],
+					this.key[(currentKey * MATRIX_ORDER) + j]);
+			}
+		}
+	}
+
 	private void rotWord(char columnOrigin[], char columnDestiny[]) {
 		columnDestiny[MATRIX_ORDER - 1] = columnOrigin[0];
 
 		for(int i = 1; i < MATRIX_ORDER; ++i) {
 			columnDestiny[i - 1] = columnOrigin[i];
+		}
+	}
+
+	private void xorBtweenVector(char vector1[], char vector2[], char vectorRestult[]) {
+		for(int i = 0; i < MATRIX_ORDER; ++i) {
+			vectorRestult[i] = (char) (vector1[i] ^ vector2[i]);
 		}
 	}
 
