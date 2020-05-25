@@ -22,7 +22,7 @@ public class Main {
 		Cipher cipher = Cipher.getInstance();
 
 		texto_cifrado = cipher.cifrate(texto, key);
-		texto_decifrado = cipher.decifrate(texto_cifrado, null);
+		texto_decifrado = cipher.decifrate(texto_cifrado);
 
 		System.out.println("Texto          : -" + texto + "-");
 		//System.out.println("Texto cifrado: " + texto_cifrado);
