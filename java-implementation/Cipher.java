@@ -26,14 +26,26 @@ public class Cipher {
 			for(int i = 0; i < MATRIX_ORDER; ++i) {
 				for(int j = 0; j < MATRIX_ORDER; ++j) {
 					this.key[i][j] = new_key.charAt((i * MATRIX_ORDER) + j);
-
-					showByte(new_key.charAt((i * MATRIX_ORDER) + j));
 				}
-				System.out.println();
 			}
 		}
+	}
 
-		showByte(Tables.sbox[5]);
+	public String cifrate(String text, String key) {
+		return null;
+	}
+
+	public String decifrate(String text, String key) {
+		return null;	
+	}
+
+	/* ------------------------- Funciones auxiliares -------------------------- */
+	private void rotWord(char columnOrigin[], char columnDestiny[]) {
+		columnDestiny[MATRIX_ORDER - 1] = columnOrigin[0];
+
+		for(int i = 1; i < MATRIX_ORDER; ++i) {
+			columnDestiny[i - 1] = columnOrigin[i];
+		}
 	}
 
 	private static final byte MATRIX_ORDER = 4;
