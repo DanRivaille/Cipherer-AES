@@ -2,6 +2,16 @@
 
 #include "Cipher.h"
 
+Cipher *Cipher::instance = NULL;
+
+Cipher *Cipher::getInstance(void)
+{
+	if(instance == NULL)
+		instance = new Cipher();
+
+	return instance;
+}
+
 Cipher::Cipher(void)
 {
 	this->key.resize(MATRIX_ORDER * (CANT_ROUNDS + 1));

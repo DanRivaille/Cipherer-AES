@@ -15,14 +15,21 @@ using namespace std;
 class Cipher
 {
 	public:
-		Cipher(void);
+		static Cipher *getInstance(void);
 
+		//Establece la key a utilizar en los siguientes cifrados
 		void setKey(string *new_key);
 
 		string cifrate(string text, string *new_key = NULL);
 		string decifrate(string text, string *new_key = NULL);
 
 	private:
+		static Cipher *instance;
+
+		//Constructor
+		Cipher(void);
+
+		//Funciones del algoritmo AES
 		void initialRoundCifrate(std::vector<std::vector<unsigned char>> &state);
 		void standardRoundCifrate(std::vector<std::vector<unsigned char>> &state, int current_round);
 		void finalRoundCifrate(std::vector<std::vector<unsigned char>> &state);
